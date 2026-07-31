@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For Christe ❤️</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    .font-handwriting { font-family: 'Caveat', cursive; }
+    .font-title { font-family: 'Great Vibes', cursive; }
+    .font-sans-custom { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* Rich Deep Red Velvet Background */
+    body {
+      background: radial-gradient(circle at center, #881337 0%, #4c0519 60%, #1f020a 100%);
+      min-height: 100vh;
+    }
+
+    .bg-red-floral {
+      background-color: #4c0519;
+      background-image: radial-gradient(#9f1239 1.5px, transparent 1.5px), radial-gradient(#e11d48 1.5px, #4c0519 1.5px);
+      background-size: 50px 50px;
+      background-position: 0 0, 25px 25px;
+    }
+
+    /* Keypad Styling */
+    .keypad-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid rgba(225, 29, 72, 0.4);
+      background: rgba(255, 255, 255, 0.95);
+      color: #881337;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .keypad-btn:active {
+      transform: scale(0.9);
+      background: #e11d48;
+      color: white;
+    }
+
+    /* Floating Canvas Cards */
+    .scrapbook-card {
+      opacity: 0;
+      transform: translateY(40px) scale(0.8);
+      transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .scrapbook-card.revealed {
+      opacity: 1;
+    }
+
+    .scrapbook-card.revealed:hover {
+      transform: scale(1.08) rotate(0deg) !important;
+      z-index: 40 !important;
+      box-shadow: 0 25px 30px -5px rgba(0,0,0,0.5), 0 10px 12px -6px rgba(0,0,0,0.3);
+    }
+
+    /* Heart Glow Animation */
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(225,29,72,0.4)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(225,29,72,0.8)); }
+    }
+    .animate-heart-pulse {
+      animation: heartPulse 2.5s ease-in-out infinite;
+    }
+
+    /* Cursor Particles */
+    #cursor-container { pointer-events: none; position: fixed; inset: 0; z-index: 9999; }
+    .heart-particle {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      animation: floatUp 1.2s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-35px) scale(0.4); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake { animation: shake 0.4s ease-in-out; }
+  </style>
+</head>
+<body class="font-sans-custom overflow-x-hidden text-rose-100 flex flex-col justify-between min-h-screen">
+
+  <div id="cursor-container"></div>
+
+  <!-- STAGE 1: KEYPAD LOCK SCREEN -->
+  <section id="lock-stage" class="fixed inset-0 z-50 bg-red-floral flex flex-col items-center justify-center p-4 transition-all duration-700">
+    <div class="bg-stone-900/90 backdrop-blur-md border border-rose-800/80 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-6">
+      
+      <div class="relative w-24 h-24 mx-auto flex items-center justify-center">
+        <div class="absolute inset-0 bg-rose-600/20 rounded-full animate-ping"></div>
+        <div class="text-6xl filter drop-shadow-[0_0_15px_rgba(225,29,72,0.8)]">🔒</div>
+      </div>
+
+      <div>
+        <p class="font-title text-5xl text-rose-500">For Christe</p>
+        <p class="text-xs text-rose-300/80 font-medium tracking-widest uppercase mt-1">Enter key to unlock</p>
+      </div>
+
+      <div id="passcode-dots" class="flex justify-center gap-3 py-2">
+        <div class="dot w-3.5 h-3.5 rounded-full border-2 border-rose-500 transition-all"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full border-2 border-rose-500 transition-all"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full border-2 border-rose-500 transition-all"></div>
+        <div class="dot w-3.5 h-3.5 rounded-full border-2 border-rose-500 transition-all"></div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 max-w-[220px] mx-auto pt-2">
+        <button class="keypad-btn" onclick="pressKey('1')">1</button>
+        <button class="keypad-btn" onclick="pressKey('2')">2</button>
+        <button class="keypad-btn" onclick="pressKey('3')">3</button>
+        <button class="keypad-btn" onclick="pressKey('4')">4</button>
+        <button class="keypad-btn" onclick="pressKey('5')">5</button>
+        <button class="keypad-btn" onclick="pressKey('6')">6</button>
+        <button class="keypad-btn" onclick="pressKey('7')">7</button>
+        <button class="keypad-btn" onclick="pressKey('8')">8</button>
+        <button class="keypad-btn" onclick="pressKey('9')">9</button>
+        <button class="keypad-btn text-xs font-bold" onclick="clearKey()">CLR</button>
+        <button class="keypad-btn" onclick="pressKey('0')">0</button>
+        <button class="keypad-btn text-xs font-bold" onclick="deleteKey()">⌫</button>
+      </div>
+
+      <p id="error-msg" class="text-xs text-rose-400 hidden font-medium">Wrong key ❤️ Hint: 1234</p>
+    </div>
+  </section>
+
+
+  <!-- STAGE 2: REALISTIC HEART-FORMED ROSES ANIMATION -->
+  <div id="rose-heart-stage" class="fixed inset-0 z-40 bg-rose-950/95 backdrop-blur-lg pointer-events-none opacity-0 flex flex-col items-center justify-center transition-all duration-1000 p-4">
+    <div id="rose-heart-graphic" class="relative w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] flex items-center justify-center transition-all duration-1000 transform scale-50">
+      
+      <!-- Realistic Red Roses Heart Outline -->
+      <div id="heart-rose-ring" class="absolute inset-0 animate-heart-pulse">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[0%] left-[50%] -translate-x-1/2 w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[8%] left-[25%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[8%] right-[25%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[25%] left-[8%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[25%] right-[8%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[48%] left-[5%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[48%] right-[5%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[70%] left-[18%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[70%] right-[18%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[88%] left-[36%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute top-[88%] right-[36%] w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=100&auto=format&fit=crop" class="absolute bottom-[0%] left-[50%] -translate-x-1/2 w-12 h-12 rounded-full object-cover shadow-lg border border-rose-500">
+      </div>
+
+      <!-- Center Card -->
+      <div class="bg-stone-900/90 border-2 border-rose-500/80 p-8 rounded-full shadow-[0_0_50px_rgba(225,29,72,0.6)] text-center space-y-1 z-10 max-w-[260px]">
+        <p class="font-title text-3xl sm:text-4xl text-rose-400">this is for you</p>
+        <div class="py-2 border-y border-rose-800 my-1">
+          <p class="text-[10px] text-rose-300/80 font-semibold tracking-widest uppercase">FROM YOUR LOVE</p>
+          <p class="font-title text-4xl sm:text-5xl text-rose-500 font-bold">FOR CHRISTE</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- STAGE 3: EXPANDED CANVAS BOARD -->
+  <main id="main-canvas" class="min-h-screen relative p-4 sm:p-8 overflow-hidden flex flex-col items-center justify-center hidden">
+    
+    <header class="text-center space-y-1 mb-4 z-10">
+      <p class="font-title text-5xl sm:text-7xl text-rose-400 filter drop-shadow-[0_0_10px_rgba(225,29,72,0.5)]">This is for you</p>
+      <p class="text-rose-300 font-semibold text-xs sm:text-sm tracking-widest uppercase">FOR CHRISTE ❤️</p>
+    </header>
+
+    <!-- CANVAS BOARD CONTAINER -->
+    <div class="relative w-full max-w-6xl h-[780px] sm:h-[820px] rounded-3xl bg-stone-900/60 backdrop-blur-xl border border-rose-900/60 shadow-[0_0_60px_rgba(0,0,0,0.8)] p-6 overflow-hidden">
+
+      <!-- Sealed Central Envelope Button -->
+      <div id="central-envelope" onclick="triggerSequentialReveal()" class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-amber-50 p-8 rounded-3xl border-4 border-rose-600 shadow-[0_0_35px_rgba(225,29,72,0.5)] text-center w-80 z-30 cursor-pointer hover:scale-105 transition-all duration-300 group">
+        <div class="text-7xl mb-3 transform group-hover:scale-110 transition duration-300">✉️</div>
+        <p class="font-handwriting text-4xl text-rose-900 font-bold">Tap the Envelope</p>
+        <p class="text-xs text-rose-600 mt-1 uppercase tracking-wider font-bold">Click to unfold our story ✨</p>
+      </div>
+
+      <!-- Item 1: Polaroid Card 1 -->
+      <div id="item-1" onclick="openScratchModal('photo-modal-1')" class="scrapbook-card absolute top-[10%] left-[5%] -rotate-6 bg-white p-3.5 rounded-2xl shadow-2xl w-56 text-center z-10 cursor-pointer">
+        <div class="w-full h-52 rounded-xl overflow-hidden bg-rose-100 flex items-center justify-center text-rose-700 font-handwriting text-2xl relative border border-rose-200">
+          <img id="card-img-1" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop" class="w-full h-full object-cover hidden">
+          <span id="card-text-1">✨ Scratch Me</span>
+        </div>
+        <p id="card-caption-1" class="font-handwriting text-2xl text-stone-900 mt-2 font-bold">Scratch me ❤️</p>
+      </div>
+
+      <!-- Item 2: Polaroid Card 2 -->
+      <div id="item-2" onclick="openScratchModal('photo-modal-2')" class="scrapbook-card absolute top-[52%] left-[8%] rotate-6 bg-white p-3.5 rounded-2xl shadow-2xl w-56 text-center z-10 cursor-pointer">
+        <div class="w-full h-52 rounded-xl overflow-hidden bg-rose-100 flex items-center justify-center text-rose-700 font-handwriting text-2xl relative border border-rose-200">
+          <img id="card-img-2" src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500&auto=format&fit=crop" class="w-full h-full object-cover hidden">
+          <span id="card-text-2">✨ Scratch Me</span>
+        </div>
+        <p id="card-caption-2" class="font-handwriting text-2xl text-stone-900 mt-2 font-bold">Scratch me ✨</p>
+      </div>
+
+      <!-- Item 3: Floral "For You" Note -->
+      <div id="item-3" onclick="openModal('flower-note-modal')" class="scrapbook-card absolute top-[70%] left-[38%] -rotate-3 bg-rose-100 border-2 border-rose-400 p-5 rounded-2xl shadow-xl w-52 text-center z-20 cursor-pointer">
+        <div class="text-4xl mb-1">💐</div>
+        <p class="font-title text-4xl text-rose-700 font-bold">for you</p>
+      </div>
+
+      <!-- Item 4: Realistic Red Rose Bouquet Card -->
+      <div id="item-4" onclick="openModal('bouquet-modal')" class="scrapbook-card absolute top-[58%] left-[60%] rotate-12 bg-stone-900/90 border border-rose-600/60 p-3 rounded-2xl shadow-2xl z-20 cursor-pointer w-32 h-32 flex items-center justify-center overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=400&auto=format&fit=crop" class="w-full h-full object-cover rounded-xl border border-rose-500">
+      </div>
+
+      <!-- Item 5: Video Memory Card -->
+      <div id="item-5" onclick="openModal('video-modal')" class="scrapbook-card absolute top-[8%] right-[6%] rotate-2 bg-stone-950 text-white p-4 rounded-2xl shadow-2xl w-72 z-10 cursor-pointer border border-rose-900/60">
+        <div class="flex items-center gap-2 mb-2 text-xs text-rose-400 font-bold">
+          <span>▶ Watch Memory Video</span>
+        </div>
+        <div class="aspect-video bg-stone-900 rounded-lg overflow-hidden flex items-center justify-center text-xs text-stone-500 border border-stone-800">
+          [ Video Moment ]
+        </div>
+        <p class="text-xs font-semibold mt-2 truncate text-rose-200">Click to play video clip...</p>
+      </div>
+
+      <!-- Item 6: Spotify Song Card -->
+      <div id="item-6" onclick="openModal('music-modal')" class="scrapbook-card absolute top-[50%] right-[6%] -rotate-3 bg-stone-950 text-white p-5 rounded-2xl shadow-2xl w-64 z-10 cursor-pointer border border-rose-900/60">
+        <div class="flex items-center justify-between text-xs text-emerald-400 mb-2 font-bold">
+          <span>Spotify Soundtrack</span>
+          <span>♫</span>
+        </div>
+        <p class="text-base font-bold text-white">Cornelia Street</p>
+        <p class="text-xs text-stone-400">Taylor Swift</p>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- CENTERED SCRATCH-OFF MODALS -->
+
+  <div id="photo-modal-1" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full text-center relative border-4 border-rose-400">
+      <button onclick="closeModal('photo-modal-1')" class="absolute -top-3 -right-3 w-9 h-9 bg-rose-600 text-white rounded-full font-bold shadow-lg text-lg">✕</button>
+      
+      <div class="relative w-full h-80 rounded-xl overflow-hidden bg-rose-100 my-2">
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+        <canvas id="scratch-canvas-1" class="absolute inset-0 w-full h-full cursor-pointer z-10"></canvas>
+      </div>
+      
+      <p id="modal-caption-1" class="font-handwriting text-3xl text-rose-950 font-bold mt-1">Scratch to reveal our memory ❤️</p>
+    </div>
+  </div>
+
+  <div id="photo-modal-2" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white p-5 rounded-3xl shadow-2xl max-w-sm w-full text-center relative border-4 border-rose-400">
+      <button onclick="closeModal('photo-modal-2')" class="absolute -top-3 -right-3 w-9 h-9 bg-rose-600 text-white rounded-full font-bold shadow-lg text-lg">✕</button>
+      
+      <div class="relative w-full h-80 rounded-xl overflow-hidden bg-rose-100 my-2">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+        <canvas id="scratch-canvas-2" class="absolute inset-0 w-full h-full cursor-pointer z-10"></canvas>
+      </div>
+      
+      <p id="modal-caption-2" class="font-handwriting text-3xl text-rose-950 font-bold mt-1">Scratch to reveal our memory ✨</p>
+    </div>
+  </div>
+
+
+  <!-- OTHER LIGHTBOX MODALS -->
+
+  <div id="envelope-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-amber-50 border-4 border-rose-500 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-4 text-stone-900 font-handwriting text-2xl leading-relaxed relative">
+      <button onclick="closeModal('envelope-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 font-sans text-sm font-bold">✕</button>
+      <p class="font-title text-4xl text-rose-700 font-bold">Dearest Christe,</p>
+      <p>Wishing you happiness in the little things, peace during difficult times, and success in everything you do. Thank you for being my favorite story and making every day brighter ❤️</p>
+      <p class="text-right font-title text-3xl text-rose-800 mt-4">— Always ❤️</p>
+    </div>
+  </div>
+
+  <div id="flower-note-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center space-y-4 shadow-2xl relative border-4 border-rose-500">
+      <button onclick="closeModal('flower-note-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-800 font-sans text-sm font-bold">✕</button>
+      <div class="w-24 h-24 mx-auto rounded-full overflow-hidden shadow-lg border-2 border-rose-500">
+        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop" class="w-full h-full object-cover">
+      </div>
+      <p class="font-title text-5xl text-rose-700 font-bold">You are so loved!</p>
+      <p class="font-handwriting text-2xl text-stone-800">Every moment spent with you is my absolute favorite.</p>
+    </div>
+  </div>
+
+  <div id="bouquet-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-stone-900 border-2 border-rose-600 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl relative text-white">
+      <button onclick="closeModal('bouquet-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-white font-sans text-sm">✕</button>
+      <div class="w-full h-64 rounded-2xl overflow-hidden border border-rose-500 shadow-2xl">
+        <img src="https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&auto=format&fit=crop" class="w-full h-full object-cover">
+      </div>
+      <p class="font-title text-5xl text-rose-500 font-bold">Red Roses for Christe</p>
+    </div>
+  </div>
+
+  <div id="video-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-stone-950 rounded-3xl p-6 max-w-xl w-full text-white space-y-4 relative border border-rose-900">
+      <button onclick="closeModal('video-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-white font-sans text-sm">✕</button>
+      <h3 class="font-sans font-bold text-lg text-rose-400">Our Video Memory</h3>
+      <div class="aspect-video bg-black rounded-xl overflow-hidden flex items-center justify-center">
+        <video controls class="w-full h-full object-cover">
+          <source src="video/memory.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <div id="music-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-stone-950 rounded-3xl p-6 max-w-sm w-full text-white space-y-4 relative border border-emerald-500/40 text-center">
+      <button onclick="closeModal('music-modal')" class="absolute top-4 right-4 text-stone-400 hover:text-white font-sans text-sm">✕</button>
+      <div class="text-6xl text-emerald-400 my-2">♫</div>
+      <h4 class="font-bold text-2xl text-white">Cornelia Street</h4>
+      <p class="text-xs text-stone-400">Taylor Swift</p>
+      <p class="font-handwriting text-3xl text-rose-400 mt-2">"I'd never walk Cornelia Street again..."</p>
+    </div>
+  </div>
+
+  <script>
+    // Permanent Scratch Tracker
+    const scratchedState = {
+      canvas1Cleared: false,
+      canvas2Cleared: false
+    };
+
+    // Keypad Script
+    let enteredCode = "";
+    const correctCode = "1234";
+
+    function pressKey(num) {
+      if (enteredCode.length < 4) {
+        enteredCode += num;
+        updateDots();
+      }
+      if (enteredCode.length === 4) {
+        checkPasscode();
+      }
+    }
+
+    function deleteKey() {
+      enteredCode = enteredCode.slice(0, -1);
+      updateDots();
+    }
+
+    function clearKey() {
+      enteredCode = "";
+      updateDots();
+    }
+
+    function updateDots() {
+      const dots = document.querySelectorAll('#passcode-dots .dot');
+      dots.forEach((dot, idx) => {
+        if (idx < enteredCode.length) {
+          dot.classList.add('bg-rose-500', 'border-rose-500');
+        } else {
+          dot.classList.remove('bg-rose-500', 'border-rose-500');
+        }
+      });
+    }
+
+    function checkPasscode() {
+      if (enteredCode === correctCode) {
+        triggerRoseHeartStage();
+      } else {
+        const errorMsg = document.getElementById('error-msg');
+        errorMsg.classList.remove('hidden');
+        document.querySelector('#lock-stage > div').classList.add('shake');
+        setTimeout(() => {
+          document.querySelector('#lock-stage > div').classList.remove('shake');
+          clearKey();
+        }, 500);
+      }
+    }
+
+    // Rose Heart Stage Animation
+    function triggerRoseHeartStage() {
+      const lockStage = document.getElementById('lock-stage');
+      const roseHeartStage = document.getElementById('rose-heart-stage');
+      const roseGraphic = document.getElementById('rose-heart-graphic');
+      const mainCanvas = document.getElementById('main-canvas');
+
+      lockStage.style.opacity = '0';
+      setTimeout(() => lockStage.classList.add('hidden'), 500);
+
+      roseHeartStage.style.opacity = '1';
+      setTimeout(() => { roseGraphic.style.transform = 'scale(1)'; }, 100);
+
+      setTimeout(() => {
+        roseHeartStage.style.opacity = '0';
+        setTimeout(() => {
+          roseHeartStage.classList.add('hidden');
+          mainCanvas.classList.remove('hidden');
+        }, 800);
+      }, 2800);
+    }
+
+    // Staggered Unfold Reveal
+    function triggerSequentialReveal() {
+      openModal('envelope-modal');
+
+      const items = ['item-1', 'item-2', 'item-3', 'item-4', 'item-5', 'item-6'];
+      items.forEach((itemId, idx) => {
+        setTimeout(() => {
+          const el = document.getElementById(itemId);
+          if (el) el.classList.add('revealed');
+        }, (idx + 1) * 350);
+      });
+    }
+
+    // Modal Control Handlers
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // Scratch Card Modal Trigger
+    function openScratchModal(modalId) {
+      openModal(modalId);
+      const isFirst = modalId === 'photo-modal-1';
+      const canvasId = isFirst ? 'scratch-canvas-1' : 'scratch-canvas-2';
+      
+      setTimeout(() => initScratchCard(canvasId, isFirst ? 1 : 2), 50);
+    }
+
+    // Scratch Canvas Logic
+    function initScratchCard(canvasId, cardNum) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+
+      if (canvas.width !== rect.width || canvas.height !== rect.height) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+
+      const isCleared = cardNum === 1 ? scratchedState.canvas1Cleared : scratchedState.canvas2Cleared;
+
+      if (isCleared) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+
+      if (!canvas.getAttribute('data-drawn')) {
+        canvas.setAttribute('data-drawn', 'true');
+        ctx.fillStyle = '#e11d48'; // Deep Red Rose Foil
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = 'bold 16px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.fillText('Scratch me ✨', canvas.width / 2, canvas.height / 2);
+      }
+
+      let isScratching = false;
+
+      function scratch(e) {
+        if (!isScratching) return;
+        const bR = canvas.getBoundingClientRect();
+        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - bR.left;
+        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - bR.top;
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fill();
+
+        checkScratchPercentage(ctx, canvas, cardNum);
+      }
+
+      canvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e); });
+      canvas.addEventListener('mousemove', scratch);
+      window.addEventListener('mouseup', () => { isScratching = false; });
+
+      canvas.addEventListener('touchstart', (e) => { isScratching = true; scratch(e); });
+      canvas.addEventListener('touchmove', scratch);
+      window.addEventListener('touchend', () => { isScratching = false; });
+    }
+
+    function checkScratchPercentage(ctx, canvas, cardNum) {
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imgData.data;
+      let transparentPixels = 0;
+
+      for (let i = 3; i < pixels.length; i += 4) {
+        if (pixels[i] === 0) transparentPixels++;
+      }
+
+      const percent = (transparentPixels / (pixels.length / 4)) * 100;
+
+      if (percent > 45) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        markAsPermanentlyRevealed(cardNum);
+      }
+    }
+
+    function markAsPermanentlyRevealed(cardNum) {
+      if (cardNum === 1) {
+        scratchedState.canvas1Cleared = true;
+        document.getElementById('card-img-1').classList.remove('hidden');
+        document.getElementById('card-text-1').classList.add('hidden');
+        document.getElementById('card-caption-1').innerText = 'Our Memory ❤️';
+        document.getElementById('modal-caption-1').innerText = 'Our Memory ❤️';
+      } else {
+        scratchedState.canvas2Cleared = true;
+        document.getElementById('card-img-2').classList.remove('hidden');
+        document.getElementById('card-text-2').classList.add('hidden');
+        document.getElementById('card-caption-2').innerText = 'Our Memory ✨';
+        document.getElementById('modal-caption-2').innerText = 'Our Memory ✨';
+      }
+    }
+
+    // Realistic Floating Particle Cursor
+    document.addEventListener('mousemove', (e) => {
+      if (Math.random() > 0.88) {
+        const heart = document.createElement('img');
+        heart.className = 'heart-particle rounded-full object-cover shadow-sm border border-rose-400';
+        heart.src = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=50&auto=format&fit=crop';
+        heart.style.left = e.clientX + 'px';
+        heart.style.top = e.clientY + 'px';
+        document.getElementById('cursor-container').appendChild(heart);
+        setTimeout(() => heart.remove(), 1200);
+      }
+    });
+  </script>
+</body>
+</html>
