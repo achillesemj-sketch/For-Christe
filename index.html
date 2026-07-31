@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Cute Surprise For You 💖</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Fredoka+One&family=Great+Vibes&family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap" rel="stylesheet" />
+  
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background: #0d0814;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    /* Vinyl Record Music Player - LARGER & PROMINENT */
+    .vinyl-wrapper {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 300;
+      cursor: pointer;
+      display: none; /* Hidden on Stage 1 */
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 20px 10px 10px;
+      border-radius: 40px;
+      box-shadow: 0 6px 20px rgba(255, 51, 102, 0.35);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      transition: all 0.3s ease;
+    }
+
+    .vinyl-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.5);
+    }
+
+    .vinyl {
+      width: 52px;
+      height: 52px;
+      background: radial-gradient(circle, #333 30%, #111 31%, #222 60%, #000 61%);
+      border-radius: 50%;
+      border: 3px solid #ff758c;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s;
+      box-shadow: 0 0 10px rgba(255, 117, 140, 0.5);
+    }
+
+    .vinyl::after {
+      content: '🎵';
+      font-size: 1rem;
+    }
+
+    .vinyl.spinning {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .music-text-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .music-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffb3c1;
+      font-weight: 600;
+    }
+
+    .music-text {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(255, 133, 162, 0.6);
+    }
+
+    /* Floating Background Hearts */
+    #hearts-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-heart {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.4);
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.5) rotate(0deg); opacity: 0.8; }
+      100% { transform: translateY(-10vh) scale(1.3) rotate(360deg); opacity: 0; }
+    }
+
+    /* DRAMATIC HEADER */
+    .dramatic-header {
+      text-align: center;
+      margin-bottom: 20px;
+      animation: fadeInHeader 1.8s ease-in-out;
+    }
+
+    .dedication-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #ffb3c1;
+      opacity: 0.9;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dedication-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.2rem;
+      background: linear-gradient(135deg, #ffffff 0%, #ff85a1 50%, #ff3366 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+      line-height: 1.2;
+    }
+
+    .glow-line {
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ff4d6d, transparent);
+      margin: 10px auto 0;
+      box-shadow: 0 0 10px #ff4d6d;
+    }
+
+    @keyframes fadeInHeader {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stage Containers Base */
+    .stage {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 10;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    .stage.active {
+      display: flex;
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 30px 25px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    h2 {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.6rem;
+      color: #ff85a1;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #ffccd5;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .cute-sticker {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    input[type="password"] {
+      width: 85%;
+      padding: 14px;
+      border: 2px dashed #ff85a2;
+      border-radius: 30px;
+      text-align: center;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #ff3366, #ff7eb3);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 51, 102, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .error-msg {
+      color: #ff4757;
+      font-size: 0.85rem;
+      height: 22px;
+      font-weight: 600;
+    }
+
+    /* Envelope Styling */
+    .envelope-wrapper {
+      position: relative;
+      cursor: pointer;
+      margin: 25px 0 10px;
+      display: inline-block;
+    }
+
+    .envelope {
+      width: 250px;
+      height: 160px;
+      background: #ff4d6d;
+      position: relative;
+      border-radius: 12px;
+      box-shadow: 0 12px 30px rgba(255, 77, 109, 0.4);
+    }
+
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 125px solid transparent;
+      border-right: 125px solid transparent;
+      border-top: 95px solid #ff1a40;
+      transform-origin: top;
+      transition: transform 0.6s ease;
+      z-index: 2;
+    }
+
+    .envelope.open::before {
+      transform: rotateX(180deg);
+    }
+
+    .wax-seal {
+      position: absolute;
+      top: 65px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 55px;
+      height: 55px;
+      background: #c1121f;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      border: 2px dashed #ff758c;
+      z-index: 3;
+    }
+
+    /* STAGE 3: FULL SCREEN FRAMED GALLERY */
+    #stage3 {
+      padding: 0;
+      overflow-y: auto;
+      justify-content: flex-start;
+      background: radial-gradient(circle at center, #1b0c26 0%, #05020a 100%);
+    }
+
+    .full-frame-carousel {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      scroll-snap-type: x mandatory;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+
+    .full-frame-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .framed-slide {
+      flex: 0 0 100vw;
+      height: 100vh;
+      scroll-snap-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .picture-frame {
+      position: relative;
+      width: 88vw;
+      max-width: 800px;
+      height: 62vh;
+      background: #111;
+      border: 12px solid #2b1b17;
+      outline: 2px solid #ff85a1;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 30px rgba(0,0,0,0.9),
+        inset 0 0 15px rgba(0,0,0,0.8),
+        0 15px 35px rgba(255, 51, 102, 0.25);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .picture-frame img, .picture-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .picture-frame::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 40%);
+      pointer-events: none;
+    }
+
+    .frame-caption {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.2rem;
+      color: #ffccd5;
+      margin-top: 18px;
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.6);
+      text-align: center;
+    }
+
+    .swipe-hint {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 1px;
+    }
+
+    /* Gallery Bottom Deck */
+    .gallery-deck {
+      width: 100vw;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(13, 8, 20, 0.95);
+    }
+
+    .love-jar-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px dashed rgba(255, 133, 162, 0.5);
+      border-radius: 18px;
+      padding: 20px 15px;
+      margin: 15px 0 20px;
+      text-align: center;
+    }
+
+    .jar-icon {
+      font-size: 3rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .jar-icon:hover {
+      transform: scale(1.15) rotate(10deg);
+    }
+
+    .note-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      color: #ff3366;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* MAKE A WISH CONTAINER */
+    .wish-container {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 133, 162, 0.4);
+      border-radius: 20px;
+      padding: 22px 18px;
+      margin-bottom: 25px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    .wish-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: #ff85a1;
+      margin-bottom: 6px;
+    }
+
+    .wish-subtitle {
+      font-size: 0.8rem;
+      color: #ffccd5;
+      margin-bottom: 15px;
+    }
+
+    .wish-input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 133, 162, 0.5);
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      margin-bottom: 14px;
+      font-family: 'Poppins', sans-serif;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .wish-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .wish-granted-box {
+      display: none;
+      background: linear-gradient(135deg, rgba(255, 51, 102, 0.25), rgba(255, 133, 162, 0.15));
+      border: 1.5px solid #ff3366;
+      border-radius: 15px;
+      padding: 15px;
+      margin-top: 10px;
+      animation: popIn 0.4s ease;
+    }
+
+    .wish-granted-text {
+      font-family: 'Sacramento', cursive;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 10px #ff3366;
+    }
+
+    /* MINI GAMES STAGE */
+    #stage-games {
+      padding: 0;
+      background: radial-gradient(circle at center, #240b2b 0%, #0a0512 100%);
+      z-index: 150;
+    }
+
+    .game-nav-bar {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 160;
+      display: flex;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      padding: 6px 12px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .game-nav-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+
+    .game-nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, #ff3366, #ff6b8b);
+      box-shadow: 0 4px 15px rgba(255, 51, 102, 0.5);
+    }
+
+    .game-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-screen.active {
+      display: flex;
+    }
+
+    .game-hud {
+      position: absolute;
+      top: 80px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .game-hud h2 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #fff, #ffccd5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .game-hud p {
+      color: #ff85a1;
+      font-size: 1rem;
+    }
+
+    #realistic-heart {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      cursor: pointer;
+      filter: drop-shadow(0 10px 25px rgba(255, 51, 102, 0.6));
+      transition: top 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                  left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.15s ease;
+      z-index: 20;
+    }
+
+    .bubble-grid-container {
+      width: 100%;
+      max-width: 900px;
+      height: calc(100vh - 200px);
+      margin-top: 100px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 15px;
+      padding: 15px;
+      scrollbar-width: none;
+    }
+
+    .bubble-grid-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .real-bubble {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, 
+                  rgba(255, 255, 255, 0.6) 0%, 
+                  rgba(255, 182, 193, 0.3) 30%, 
+                  rgba(255, 105, 180, 0.15) 60%, 
+                  rgba(255, 255, 255, 0.4) 100%);
+      box-shadow: 
+        inset -4px -4px 8px rgba(0, 0, 0, 0.3),
+        inset 4px 4px 8px rgba(255, 255, 255, 0.7),
+        0 8px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .real-bubble::before {
+      content: '';
+      position: absolute;
+      top: 12%;
+      left: 18%;
+      width: 35%;
+      height: 20%;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      filter: blur(1px);
+      transform: rotate(-30deg);
+      pointer-events: none;
+    }
+
+    .real-bubble.popped {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 
+        inset 3px 3px 6px rgba(0, 0, 0, 0.6),
+        inset -1px -1px 3px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .real-bubble.popped::before {
+      display: none;
+    }
+
+    .bubble-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #ffccd5;
+      text-align: center;
+      padding: 6px;
+      opacity: 0;
+    }
+
+    .bubble-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .real-bubble.popped .bubble-content {
+      opacity: 1;
+    }
+
+    .games-done-btn {
+      position: absolute;
+      bottom: 25px;
+      z-index: 170;
+    }
+
+    /* Final Question & Letter - RESPONSIVE & SCROLLABLE FIT */
+    #stage4 {
+      overflow-y: auto;
+      justify-content: flex-start;
+      padding: 80px 15px 40px;
+    }
+
+    #stage4 .box {
+      max-width: 520px;
+      max-height: calc(100vh - 120px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 133, 162, 0.5) transparent;
+    }
+
+    #stage4 .box::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #stage4 .box::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 133, 162, 0.5);
+      border-radius: 10px;
+    }
+
+    #stage4 h2 {
+      font-size: 1.4rem;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      position: relative;
+      min-height: 50px;
+      width: 100%;
+    }
+
+    #no-btn {
+      background: #4a4e69;
+      position: absolute;
+      right: 40px;
+    }
+
+    #yes-btn {
+      position: absolute;
+      left: 40px;
+    }
+
+    .letter-content {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: left;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 100%;
+    }
+
+    .letter-content p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    .letter-title {
+      font-family: 'Sacramento', cursive;
+      font-size: 2.1rem;
+      color: #ff85a1;
+      margin-bottom: 10px;
+    }
+
+    .signature-container {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: right;
+    }
+
+    .forever-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: #ffccd5;
+      font-style: italic;
+    }
+
+    .dramatic-signature {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 0 12px rgba(255, 51, 102, 0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Player sourcing music/Sparks.mp3 -->
+  <audio id="bg-music" loop>
+    <source src="music/Sparks.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- LARGER Vinyl Record Toggle Button (Appears starting at Stage 2) -->
+  <div class="vinyl-wrapper" id="vinyl-wrapper" onclick="toggleMusic()">
+    <div class="vinyl" id="vinyl-disc"></div>
+    <div class="music-text-container">
+      <span class="music-label">Now Playing</span>
+      <span class="music-text" id="music-status">Coldplay - Sparks 🎶</span>
+    </div>
+  </div>
+
+  <div id="hearts-container"></div>
+
+  <!-- STAGE 1: LOCK PASSWORD -->
+  <div id="stage1" class="stage active">
+    <div class="dramatic-header">
+      <span class="dedication-sub">An Interactive Journey</span>
+      <h1 class="dedication-title">From Elroi to Christe</h1>
+      <div class="glow-line"></div>
+    </div>
+
+    <div class="box">
+      <div class="cute-sticker">🔐</div>
+      <h2>Secret Passcode Required</h2>
+      <p>Enter our special passcode to enter!</p>
+      <input type="password" id="passcode" placeholder="Hint: try 1234 or love" />
+      <div class="error-msg" id="error1"></div>
+      <button class="btn" onclick="checkStage1()">Unlock Surprise ✨</button>
+    </div>
+  </div>
+
+  <!-- STAGE 2: ENVELOPE TRANSITION -->
+  <div id="stage2" class="stage">
+    <div class="dramatic-header">
+      <h1 class="dedication-title">From Elroi to Christe</h1>
+      <div class="glow-line"></div>
+    </div>
+
+    <div class="box">
+      <div class="cute-sticker">💌</div>
+      <h2>Special Delivery!</h2>
+      <p>Tap the heart seal to open your letter!</p>
+      <div class="envelope-wrapper" onclick="openEnvelope()">
+        <div class="envelope" id="envelope">
+          <div class="wax-seal">💖</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 3: FULL SCREEN FRAMED GALLERY -->
+  <div id="stage3" class="stage">
+    
+    <!-- Full-Screen Horizontal Scrollable Frames -->
+    <div class="full-frame-carousel">
+      
+      <!-- Slide 1 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <video controls poster="images/photo1.jpg">
+            <source src="video/memory.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="frame-caption">Memory #1: Where it all started 💕</div>
+        <div class="swipe-hint">Swipe Left ➔</div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <img src="images/photo3.jpg" alt="Memory 2" />
+        </div>
+        <div class="frame-caption">Memory #2: My favorite smile 😊</div>
+        <div class="swipe-hint">Swipe Left ➔</div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <img src="images/photo1.jpg" alt="Memory 3" />
+        </div>
+        <div class="frame-caption">Memory #3: Precious moments in motion ✨</div>
+        <div class="swipe-hint">Swipe Left ➔</div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <img src="images/photo11.jpg" alt="Memory 4" />
+        </div>
+        <div class="frame-caption">Memory #4: Pretty in every picture 🌸</div>
+        <div class="swipe-hint">Swipe Left ➔</div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <img src="images/photo10.jpg" alt="Memory 5" />
+        </div>
+        <div class="frame-caption">Memory #5: Cute even when you're mad ❤️🥹</div>
+        <div class="swipe-hint">Swipe Left ➔</div>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="framed-slide">
+        <div class="picture-frame">
+          <video controls poster="images/photo3.jpg">
+            <source src="video/moment5.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="frame-caption">Memory #6: Unforgettable Memory 🎥</div>
+        <div class="swipe-hint">Scroll down for magic 👇</div>
+      </div>
+
+    </div>
+
+    <!-- Gallery Deck: Love Jar & Magic Wish Box -->
+    <div class="gallery-deck">
+      <div class="love-jar-container">
+        <div class="wish-title">🫙 The "Reasons I Love You" Jar</div>
+        <p style="font-size: 0.8rem; margin-bottom: 8px;">Tap the jar to pull out a reason!</p>
+        <div class="jar-icon" onclick="drawReason()">🫙</div>
+        <div class="note-card" id="love-reason">Tap the jar above! 💕</div>
+      </div>
+
+      <!-- ONE MAGIC WISH BOX -->
+      <div class="wish-container">
+        <div class="wish-title">🪄 One Magic Wish</div>
+        <div class="wish-subtitle">Wish for anything—a date, a trip, or a gift! Elroi promises to grant it. ✨</div>
+        
+        <div id="wish-form">
+          <input type="text" id="user-wish-text" class="wish-input" placeholder="Type your wish here..." />
+          <button class="btn" style="padding: 10px 24px; font-size: 0.9rem;" onclick="submitWish()">Grant My Wish 🌟</button>
+        </div>
+
+        <div id="wish-granted" class="wish-granted-box">
+          <p style="font-size: 0.85rem; color: #ffccd5; margin-bottom: 4px;">Your wish has been granted! ❤️</p>
+          <div id="display-wish" class="wish-granted-text"></div>
+        </div>
+      </div>
+
+      <button class="btn" onclick="goToGameStage()">Play Mini-Games 🎮➡️</button>
+    </div>
+  </div>
+
+  <!-- STAGE 3.5: FULL-SCREEN MINI-GAMES -->
+  <div id="stage-games" class="stage">
+    <div class="game-nav-bar">
+      <button class="game-nav-btn active" onclick="switchGameTab(this, 'catch')">❤️ Catch My Heart</button>
+      <button class="game-nav-btn" onclick="switchGameTab(this, 'bubble')">🫧 Bubble Wrap</button>
+    </div>
+
+    <!-- Game 1 -->
+    <div id="catch-game-screen" class="game-screen active">
+      <div class="game-hud">
+        <h2>Catch My Heart</h2>
+        <p id="catch-status">Score: <span id="score-val">0</span> / 5</p>
+      </div>
+
+      <div id="realistic-heart" onclick="onHeartClicked()">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff6b8b" />
+              <stop offset="50%" stop-color="#ff3366" />
+              <stop offset="100%" stop-color="#800020" />
+            </linearGradient>
+            <linearGradient id="shineGrad" x1="0%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="white" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="white" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M50 88.5C50 88.5 10 60 10 32.5C10 18.5 21.5 10 32.5 10 C41.5 10 47 16.5 50 21C53 16.5 58.5 10 67.5 10 C78.5 10 90 18.5 90 32.5 C90 60 50 88.5 50 88.5Z" fill="url(#heartGrad)"/>
+          <path d="M30 16C22 16 16 22 15 30C18 20 26 18 34 18C33 16.8 31.5 16 30 16Z" fill="url(#shineGrad)"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Game 2 -->
+    <div id="bubble-game-screen" class="game-screen">
+      <div class="game-hud">
+        <h2>Love Bubble Wrap</h2>
+        <p>Pop the bubbles to reveal all our memory photos!</p>
+      </div>
+      <div class="bubble-grid-container" id="bubble-grid"></div>
+    </div>
+
+    <button class="btn games-done-btn" onclick="goToStage4()">Continue to Final Question ➡️</button>
+  </div>
+
+  <!-- STAGE 4: RUNAWAY QUESTION & FINAL MESSAGE -->
+  <div id="stage4" class="stage">
+    <div class="box">
+      <div class="cute-sticker" id="stage4-sticker">🥺</div>
+      <h2 id="stage4-title">Will you be my girlfriend... until the day I get to call you my wife?</h2>
+      <p id="stage4-subtitle">Choose carefully! (Hint: Try clicking No 😉)</p>
+      
+      <div class="btn-group" id="question-box">
+        <button class="btn" id="yes-btn" onclick="sayYes()">YES! ❤️</button>
+        <button class="btn" id="no-btn" onmouseover="runAway()" onclick="runAway()">No 😜</button>
+      </div>
+
+      <div id="secret-letter" style="display: none; margin-top: 20px; width: 100%;">
+        <div class="letter-content">
+          <div class="letter-title">My Dearest Christe,</div>
+          <p>Happy Girlfriend Day!</p>
+          <p>Baby, you are one of the most extraordinary women I have ever met. Even though we haven’t known each other for a long time, being with you feels like I have known you for years.</p>
+          <p>You are the person who makes me feel truly loved and appreciated, just like you said you would — loving someone with all your heart and giving your everything. Now I understand what it feels like to be loved by someone who gives her all, someone who matches my energy and makes me feel so special.</p>
+          <p>You are wonderful, beautiful inside and out. I want to make you the happiest woman, cherish every moment we share, and appreciate every little thing about you. Even when we officially become one someday, I promise I will keep choosing you, keep appreciating you, and do my best to keep your smile every single day.</p>
+          <p>Thank you for showing me how beautiful it feels to be loved by someone like you. ❤️</p>
+          <p>I love you more than words can ever say!</p>
+          
+          <div class="signature-container">
+            <p class="forever-text">Forever & Always,</p>
+            <p class="dramatic-signature">From Elroi to Christe 💕</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STAGE_1_PASSCODE = "200626";
+
+    /* Music Player Logic using music/Sparks.mp3 */
+    const music = document.getElementById('bg-music');
+    const vinyl = document.getElementById('vinyl-disc');
+    const musicStatus = document.getElementById('music-status');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        vinyl.classList.remove('spinning');
+        musicStatus.textContent = 'Play Sparks 🎶';
+      } else {
+        music.play().catch(() => {});
+        vinyl.classList.add('spinning');
+        musicStatus.textContent = 'Coldplay - Sparks 💖';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    /* Reveal & Start Music automatically upon passing Stage 1 */
+    function startMusicAfterStage1() {
+      document.getElementById('vinyl-wrapper').style.display = 'flex';
+      music.play().then(() => {
+        vinyl.classList.add('spinning');
+        musicStatus.textContent = 'Coldplay - Sparks 💖';
+        isPlaying = true;
+      }).catch(() => {
+        musicStatus.textContent = 'Play Sparks 🎶';
+        isPlaying = false;
+      });
+    }
+
+    const loveReasons = [
+      "The way you look at me with full of love in your eyes",
+      "you make me super comfortable when im with you",
+      "Your cute little happy dance when eating good food 🍰",
+      "Because you make even boring rainy days feel warm and fun 🌧️❤️",
+      "The warm feeling I get whenever you hold my hand ✨",
+      "How you always know how to make me smile no matter what 💕",
+      "Simply because you are YOU, and you're perfect in my eyes 💖"
+    ];
+
+    let reasonIndex = 0;
+    function drawReason() {
+      const card = document.getElementById('love-reason');
+      card.style.animation = 'none';
+      card.offsetHeight;
+      card.style.animation = 'popIn 0.3s ease';
+      card.textContent = loveReasons[reasonIndex];
+      reasonIndex = (reasonIndex + 1) % loveReasons.length;
+      confetti({ particleCount: 20, spread: 40, origin: { y: 0.7 } });
+    }
+
+    /* Wish Submission Handler */
+    function submitWish() {
+      const wishInput = document.getElementById('user-wish-text');
+      const val = wishInput.value.trim();
+
+      if (val !== "") {
+        document.getElementById('wish-form').style.display = 'none';
+        document.getElementById('display-wish').innerText = `"${val}"`;
+        document.getElementById('wish-granted').style.display = 'block';
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.7 } });
+      }
+    }
+
+    /* Floating Background */
+    const heartsContainer = document.getElementById('hearts-container');
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('floating-heart');
+      heart.innerHTML = ['❤️', '💖', '🌸', '✨', '🎵', '🎶'][Math.floor(Math.random() * 6)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      const size = Math.random() * 16 + 14;
+      heart.style.fontSize = size + 'px';
+      const duration = Math.random() * 4 + 3;
+      heart.style.animationDuration = duration + 's';
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), duration * 1000);
+    }
+    setInterval(createHeart, 350);
+
+    /* Stage Navigation */
+    function showStage(stageId) {
+      document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+      document.getElementById(stageId).classList.add('active');
+    }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
+    function checkStage1() {
+      const input = document.getElementById('passcode').value.trim().toLowerCase();
+      const error = document.getElementById('error1');
+      if (input === STAGE_1_PASSCODE.toLowerCase() || input === "love") {
+        error.textContent = "";
+        triggerConfetti();
+        showStage('stage2');
+        startMusicAfterStage1(); // Reveal & play player starting here
+      } else {
+        error.textContent = "Oopsie! Wrong code, try again darling 💕";
+      }
+    }
+
+    function openEnvelope() {
+      document.getElementById('envelope').classList.add('open');
+      triggerConfetti();
+      setTimeout(() => showStage('stage3'), 900);
+    }
+
+    function goToGameStage() {
+      showStage('stage-games');
+      moveHeartRandomly();
+      createBubbleWrap();
+    }
+
+    function goToStage4() {
+      showStage('stage4');
+    }
+
+    /* Games Logic */
+    function switchGameTab(btn, tab) {
+      document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.game-nav-btn').forEach(b => b.classList.remove('active'));
+
+      btn.classList.add('active');
+      if (tab === 'catch') {
+        document.getElementById('catch-game-screen').classList.add('active');
+      } else {
+        document.getElementById('bubble-game-screen').classList.add('active');
+      }
+    }
+
+    let gameScore = 0;
+    function onHeartClicked() {
+      gameScore++;
+      document.getElementById('score-val').innerText = gameScore;
+      synthesizePopSound(700, 0.05);
+
+      if (gameScore >= 5) {
+        document.getElementById('catch-status').innerText = "You caught my heart! ❤️";
+        document.getElementById('realistic-heart').style.display = 'none';
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
+      } else {
+        moveHeartRandomly();
+      }
+    }
+
+    function moveHeartRandomly() {
+      const heart = document.getElementById('realistic-heart');
+      if (!heart) return;
+      
+      const pad = 100;
+      const maxX = window.innerWidth - pad * 2;
+      const maxY = window.innerHeight - pad * 2;
+
+      const randomX = Math.floor(Math.random() * Math.max(maxX, 100)) + pad / 2;
+      const randomY = Math.floor(Math.random() * Math.max(maxY - 100, 100)) + 120;
+
+      heart.style.left = `${randomX}px`;
+      heart.style.top = `${randomY}px`;
+    }
+
+    /* Dynamic Bubble Wrap with photos (photo1.jpg through photo25.jpg, excluding photo2.jpg) */
+    function createBubbleWrap() {
+      const grid = document.getElementById('bubble-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      // Generate photo paths: photo1, photo3..photo25
+      const bubblePhotos = [];
+      for (let i = 1; i <= 25; i++) {
+        if (i === 2) continue; // Skip photo2.jpg
+        bubblePhotos.push(`images/photo${i}.jpg`);
+      }
+
+      bubblePhotos.forEach((imgPath) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'real-bubble';
+
+        const content = document.createElement('div');
+        content.className = 'bubble-content';
+        content.innerHTML = `<img src="${imgPath}" alt="memory" onerror="this.parentElement.innerHTML='❤️'"/>`;
+
+        bubble.appendChild(content);
+
+        bubble.onclick = function() {
+          if (!bubble.classList.contains('popped')) {
+            bubble.classList.add('popped');
+            synthesizePopSound(350, 0.08);
+          }
+        };
+
+        grid.appendChild(bubble);
+      });
+    }
+
+    function synthesizePopSound(freq = 500, duration = 0.06) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + duration);
+
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    /* Final Stage Runaway Button */
+    function runAway() {
+      const noBtn = document.getElementById('no-btn');
+      const randomX = (Math.random() - 0.5) * 200;
+      const randomY = (Math.random() - 0.5) * 150;
+      noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    }
+
+    function sayYes() {
+      triggerConfetti();
+      document.getElementById('question-box').style.display = 'none';
+      document.getElementById('stage4-sticker').textContent = '🥰';
+      document.getElementById('stage4-title').textContent = 'I Knew You Would Say Yes!';
+      document.getElementById('stage4-subtitle').textContent = 'Here is your special love letter:';
+      document.getElementById('secret-letter').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
